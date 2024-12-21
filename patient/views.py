@@ -10,8 +10,9 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode #urls create kore encode and decode korar janno
 from django.utils.encoding import force_bytes #akti function ja encoding ke aro efficient kore dei
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
 
 #for sending email
 from django.core.mail import EmailMultiAlternatives
@@ -67,7 +68,17 @@ class UserLoginApiview(APIView):
             
             if user :
                 token,_ = Token.objects.get_or_create(user=user) #get_or_create function token thakle nibe ar na thakle create kore dibe. akhane create token er janno _ user kora hoice.
+                login(request, user)
                 return Response({'token':token.key, 'user_id':user.id})
             else:
                 return Response({'error': 'Invalid credentials'})
         return Response(serializer.errors)
+    
+    
+class UserLogoutApiview(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        request.user.auth_token.delete()
+        logout(request)
+        return redirect('login')

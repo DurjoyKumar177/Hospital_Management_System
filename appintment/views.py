@@ -2,9 +2,11 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from . import models
 from . import serializers
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 # Create your views here.
 class AppintmentsViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = models.Appintment.objects.all() #ei queryset built in sobar janno
     serializer_class = serializers.AppintmentSerializer
     

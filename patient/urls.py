@@ -9,5 +9,6 @@ urlpatterns = [
     path('', include(router.urls)), 
     path('register/', views.UserRegistrationApiview.as_view(), name='register'),
     path('login/', views.UserLoginApiview.as_view(), name='login'),
+    path('logout/', views.UserLogoutApiview.as_view(), name='logout'),
     path('verify/<uidb64>/<token>', views.verify, name='verify'),
 ]
