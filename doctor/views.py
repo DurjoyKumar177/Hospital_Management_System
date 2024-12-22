@@ -27,6 +27,8 @@ class SpacialitiesViewset(viewsets.ModelViewSet):
     queryset = models.Specialization.objects.all()
     serializer_class = serializers.SpecializationSerializer
     
+
+    
 class DesignationsViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = models.Designation.objects.all()
@@ -45,8 +47,16 @@ class AvailableTimeViewset(viewsets.ModelViewSet):
     serializer_class = serializers.AvaiableTimeSerializer
     filter_backends = [AvailableTimeForSpecificDoctor]
     
+class ReviewForSpecificDoctor(filters.BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        doctor_id = request.query_params.get('doctor_id')
+        if doctor_id:
+            return queryset.filter(doctor = doctor_id)
+        return queryset
+    
 class ReviewsViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = models.Review.objects.all()
     serializer_class = serializers.ReviewsSerializer
+    filter_backends = [ReviewForSpecificDoctor]
     
